@@ -7,7 +7,6 @@ import json
 from firebase_admin import storage
 from google.cloud import firestore
 import base64
-from factCheck.crew import AgentCrew
 
 @app.exception_handler(HTTPException)
 async def login_redirect_exception(request: Request, exception: HTTPException):
@@ -153,9 +152,10 @@ async def check_misinfo(request:Request):
         if(body["type"]=="text"):
             misinfo=agent.run(body["content"],None)
         else:
-            iamge_data=base64.b64decode(body["content"])
-            path="./"
-            misinfo=agent.run(None,)
+            iamge_data=base64.b64decode(body["content"]["data"])
+            path="./image/"+body["sender"]+body["content"]["type"]
+            with open(path, "wb") as f:
+                f.write(iamge_data)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500,detail="Couldn't validate the image")

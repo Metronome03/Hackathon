@@ -147,7 +147,7 @@ function App()
   {
     return (<div id="top-level-div" className="w-full h-full flex flex-col sm:flex-row justify-center items-center">
       <AccountsDisplay addFriendDisplay={addFriendDisplay} setAddFriendDisplay={setAddFriendDisplay} friendsList={friendsList} setCurrentChat={setCurrentChat}/>
-      <ChatDisplay chatMessages={chatMessages} currentChat={currentChat} addFriendDisplay={addFriendDisplay} setAddFriendDisplay={setAddFriendDisplay} setFriendsList={setFriendsList} pendingFriendsList={pendingFriendsList} setPendingFriendsList={setPendingFriendsList}/>
+      <ChatDisplay setChatMessages={setChatMessages} chatMessages={chatMessages} currentChat={currentChat} addFriendDisplay={addFriendDisplay} setAddFriendDisplay={setAddFriendDisplay} setFriendsList={setFriendsList} pendingFriendsList={pendingFriendsList} setPendingFriendsList={setPendingFriendsList}/>
       </div>
       );
   }

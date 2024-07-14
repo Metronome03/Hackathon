@@ -2,7 +2,7 @@ import FriendScreen from "./FriendScreen.jsx";
 import CurrentChatDisplay from "./CurrentChatDisplay.jsx";
 
 
-function ChatDisplay({chatMessages,addFriendDisplay,setAddFriendDisplay,setFriendsList,pendingFriendsList,setPendingFriendsList,currentChat})
+function ChatDisplay({setChatMessages,chatMessages,addFriendDisplay,setAddFriendDisplay,setFriendsList,pendingFriendsList,setPendingFriendsList,currentChat})
 {
 
     if(addFriendDisplay)
@@ -20,7 +20,7 @@ function ChatDisplay({chatMessages,addFriendDisplay,setAddFriendDisplay,setFrien
                     Please select a chat to view or send messages
                 </div>)
                 :(
-                    <CurrentChatDisplay chatMessages={chatMessages} currentChat={currentChat}/>
+                    <CurrentChatDisplay setChatMessages={setChatMessages} chatMessages={chatMessages} currentChat={currentChat}/>
                 )}
             </div>
         );
