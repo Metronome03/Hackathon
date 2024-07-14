@@ -7,6 +7,7 @@ import json
 from firebase_admin import storage
 from google.cloud import firestore
 import base64
+from factCheck.crew import AgentCrew
 
 @app.exception_handler(HTTPException)
 async def login_redirect_exception(request: Request, exception: HTTPException):
@@ -143,11 +144,32 @@ async def get_previous_chat(request:Request,doc:dict=Depends(check_cookies)):
         print(e)
         raise HTTPException(status_code=500,detail="Couldn't get the previous chats")
 
+@app.post("/check-misinfo",dependencies=[Depends(check_cookies)])
+async def check_misinfo(request:Request):
+    try:
+        agent = AgentCrew()
+        body=await request.body()
+        misinfo=None
+        if(body["type"]=="text"):
+            misinfo=agent.run(body["content"],None)
+        else:
+            iamge_data=base64.b64decode(body["content"])
+            path="./"
+            misinfo=agent.run(None,)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500,detail="Couldn't validate the image")
 
 
 @app.get("/",dependencies=[Depends(check_cookies)])
 def main_endpoint(request:Request):
-    print("Hitting the main endpoints")
-    return "This will send the react page"
+    try:
+        with open("./dist/index.html", "r") as page:
+            content = page.read()
+        return HTMLResponse(content=content, status_code=200)
+    except Exception as e:
+        print("Something went wrong trying to read the file")
+        return "Error"
+
 
 

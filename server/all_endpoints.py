@@ -20,6 +20,7 @@ key = "ThiscannotBecracked01651651JustKidding!!!!!"
 app = FastAPI()
 
 app.mount("/page", StaticFiles(directory="static_pages"), name="static_pages")
+app.mount("/assets",StaticFiles(directory="./dist/assets"),name="asset_pages")
 
 app.add_middleware(
     CORSMiddleware,

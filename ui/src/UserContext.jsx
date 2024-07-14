@@ -9,7 +9,7 @@ export const UserContextProvider=({children})=>{
     const getUserDetails=async ()=>{
         try
         {
-          const response=await fetch("http://localhost:8080/user-data",{
+          const response=await fetch("/user-data",{
             method:"GET",
             credentials:"include",
           });

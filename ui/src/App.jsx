@@ -46,7 +46,7 @@ function App()
   const getFriendsList=async ()=>{
     try
     {
-      const response=await fetch("http://localhost:8080/get-friends",{
+      const response=await fetch("/get-friends",{
         method:"GET",
         credentials:"include",
       });
@@ -104,7 +104,7 @@ function App()
     {
       if(Object.keys(currentChat).length!=0&&!chatMessages[currentChat.email])
       {
-        const response=await fetch("http://localhost:8080/get-chat",{
+        const response=await fetch("/get-chat",{
           method:"POST",
           headers:{
             "Content-Type":"application/json",

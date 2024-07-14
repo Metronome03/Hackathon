@@ -4,7 +4,7 @@ function AddFriendScreen({setAddFriendDisplay,setFriendsList})
         const friendEmailInput=document.getElementById("friendEmailInput").value;
         try
         {
-            const response=await fetch("http://localhost:8080/add-friend",{
+            const response=await fetch("/add-friend",{
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json",

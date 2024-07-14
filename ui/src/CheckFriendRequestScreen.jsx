@@ -5,7 +5,7 @@ function CheckFriendRequestScreen({pendingFriendsList,setPendingFriendsList,setF
         try
         {
             const data={answer,email};
-            const response=await fetch("http://localhost:8080/accept-request",{
+            const response=await fetch("/accept-request",{
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json",
