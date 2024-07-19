@@ -1,5 +1,5 @@
 from fastapi import HTTPException,Request,Depends
-from fastapi.responses import HTMLResponse,Response,RedirectResponse,JSONResponse
+from fastapi.responses import HTMLResponse,RedirectResponse,JSONResponse
 from fastapi.exception_handlers import http_exception_handler
 from all_endpoints import app,db,key
 import jwt
@@ -39,11 +39,10 @@ def check_cookies(request:Request):
         raise HTTPException(status_code=302,detail="Redirecting to login endpoint")
 
 @app.get("/user-data")
-def get_user_data(request:Request):
+def get_user_data(request:Request,doc:dict=Depends(check_cookies)):
     try:
-        doc=get_document_from_cookie(request)
-        data={"email":doc["email"],"username":doc["username"]}
-        return JSONResponse(content=data,status_code=200)
+        del doc["id"]
+        return JSONResponse(content=doc,status_code=200)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=302, detail="Redirecting to login endpoint")
@@ -60,29 +59,37 @@ async def get_all_friends(request:Request,doc:dict=Depends(check_cookies)):
             friend_data["email"]=friend_doc.id
             friend_data["username"]=friend["username"]
             if "pending" in friend:
-                friend_data["pending"] = friend["pending"]
+                friend_data["pending"] = True
+            else:
+                friend_data["pending"] = False
             friends.append(friend_data)
         return JSONResponse(content={"friends":friends},status_code=200)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500,detail="Couldn't retrieve friends of the user")
 
+async def get_request_body(request,field=""):
+    try:
+        body = await request.body()
+        body = json.loads(body.decode('utf-8'))
+        if(len(field)!=0):
+            return body[field]
+        else:
+            return body
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=422,detail="Something went from while parsing JSONf from request body",)
 @app.post("/add-friend")
 async def add_friend(request:Request,doc:dict=Depends(check_cookies)):
     try:
-        body=await request.body()
-        body=json.loads(body.decode('utf-8'))
-        friendEmail=body["friendEmail"]
+        friendEmail=await get_request_body(request,"friendEmail")
         if "@" not in friendEmail:
             raise HTTPException(status_code=422, detail="Proper email needs to be entered")
         friendDoc = db.collection("users").where("email", "==", friendEmail).get()
         if not friendDoc:
             raise HTTPException(status_code=404, detail="User could not be found")
-        friendData=friendDoc[0].to_dict()
-        requestData={"id":doc["id"],"pending":True,"username":doc["username"]}
-        ref=db.collection("users").document(friendDoc[0].id)
-        sub_ref=ref.collection("friends").document(doc["email"])
-        sub_ref.set(requestData)
+        sub_ref=db.collection("users").document(friendDoc[0].id).collection("friends").document(doc["email"])
+        sub_ref.set({"id":doc["id"],"pending":True,"username":doc["username"]})
         return JSONResponse(content="Friend request successfully sent",status_code=200)
     except Exception as e:
         print(e)
@@ -91,10 +98,8 @@ async def add_friend(request:Request,doc:dict=Depends(check_cookies)):
 @app.post("/accept-request")
 async def process_friend_request(request:Request,doc:dict=Depends(check_cookies)):
     try:
-        body = await request.body()
-        body = json.loads(body.decode('utf-8'))
-        ref=db.collection("users").document(doc["id"])
-        sub_ref=ref.collection("friends").document(body["email"])
+        body=await get_request_body(request)
+        sub_ref=db.collection("users").document(doc["id"]).collection("friends").document(body["email"])
         sub_ref_doc=sub_ref.get()
         sub_ref_data=sub_ref_doc.to_dict()
         @firestore.transactional
@@ -117,8 +122,7 @@ async def process_friend_request(request:Request,doc:dict=Depends(check_cookies)
 @app.post("/get-chat")
 async def get_previous_chat(request:Request,doc:dict=Depends(check_cookies)):
     try:
-        body=await request.body()
-        body = json.loads(body.decode('utf-8'))
+        body=await get_request_body(request)
         messages=[]
         ref_name = ""
         if doc["email"] < body["email"]:
@@ -146,7 +150,7 @@ async def get_previous_chat(request:Request,doc:dict=Depends(check_cookies)):
 @app.post("/check-misinfo",dependencies=[Depends(check_cookies)])
 async def check_misinfo(request:Request):
     try:
-        agent = AgentCrew()
+
         body=await request.body()
         misinfo=None
         if(body["type"]=="text"):

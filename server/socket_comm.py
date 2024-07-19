@@ -1,5 +1,4 @@
 import copy
-
 from fastapi import WebSocket,WebSocketDisconnect,HTTPException
 from all_endpoints import app,db,key
 from user_endpoints import get_document_from_cookie

@@ -1,11 +1,13 @@
-function CheckFriendRequestScreen({pendingFriendsList,setPendingFriendsList,setFriendsList})
+import config from './main.jsx'
+
+function CheckFriendRequestScreen({friendsList,setFriendsList})
 {
     
     const handleAnswer=async (answer,email,username)=>{
         try
         {
             const data={answer,email};
-            const response=await fetch("/accept-request",{
+            const response=await fetch(config.server+"/accept-request",{
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json",
@@ -18,23 +20,26 @@ function CheckFriendRequestScreen({pendingFriendsList,setPendingFriendsList,setF
                 const result=await response.json();
                 if(result["accepted"])
                 {
-                    let acceptedUser={};
-                    setPendingFriendsList(prevList=>{
-                        const updatedList=prevList.filter(request=>{
-                            if(request["email"]==email);
+                    setFriendsList(prevList=>{
+                        const updatedList=prevList.map(friend=>{
+                            if(friend["email"]==email);
                             {
-                                setFriendsList(prevList=>[...prevList,request])
-                                return false;
+                                friend["pending"]=false;
                             }
-                            return truel
+                            return friend;
                         }
                         );
                         return updatedList;
-                    })
+                    });
                 }
                 else
                 {
-
+                    setFriendsList(prevList=>{
+                        const updatedList=prevList.filter(friend=>{
+                            return friend["email"]!=email;
+                        });
+                        return updatedList;
+                    });
                 }
             }
             else
@@ -48,19 +53,22 @@ function CheckFriendRequestScreen({pendingFriendsList,setPendingFriendsList,setF
         }
     };
     return (<div className="basis-4/6 w-full sm:h-full overflow-y-auto max-h-full flex flex-col justify-start items-center">
-        {pendingFriendsList.map(friendRequest=>{
-            return (
-                <div key={friendRequest.email} className="w-5/6 h-1/6 flex flex-row justify-between items-center bg-slate-900">
-                    <div className="basis-4/6 flex flex-col justify-evenls items-start">
-                        <div className="basis-3/6">{friendRequest.email}</div>
-                        <div className="basis-2/6">{friendRequest.username}</div>
+        {friendsList.map(friend=>{
+            if(friend["pending"])
+            {
+                return (
+                    <div key={friend.email} className="w-5/6 h-1/6 flex flex-row justify-between items-center bg-slate-900">
+                        <div className="basis-4/6 flex flex-col justify-evenls items-start">
+                            <div className="basis-3/6">{friend.email}</div>
+                            <div className="basis-2/6">{friend.username}</div>
+                        </div>
+                        <div className="basis-2/6 flex flex-row justify-evenly items-center">
+                            <button onClick={()=>handleAnswer(true,friend.email,friend.username)} className="bg-green-800">Add</button>
+                            <button onClick={()=>handleAnswer(false,friend.email,friend.username)} className="bg-red-800">Reject</button>
+                        </div>
                     </div>
-                    <div className="basis-2/6 flex flex-row justify-evenly items-center">
-                        <button onClick={()=>handleAnswer(true,friendRequest.email,friendRequest.username)} className="bg-green-800">Add</button>
-                        <button onClick={()=>handleAnswer(false,friendRequest.email,friendRequest.username)} className="bg-red-800">Reject</button>
-                    </div>
-                </div>
-            );
+                );
+            }
         })}
     </div>
     );

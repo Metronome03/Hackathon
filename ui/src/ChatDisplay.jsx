@@ -2,13 +2,13 @@ import FriendScreen from "./FriendScreen.jsx";
 import CurrentChatDisplay from "./CurrentChatDisplay.jsx";
 
 
-function ChatDisplay({setChatMessages,chatMessages,addFriendDisplay,setAddFriendDisplay,setFriendsList,pendingFriendsList,setPendingFriendsList,currentChat})
+function ChatDisplay({setChatMessages,chatMessages,addFriendDisplay,setAddFriendDisplay,setFriendsList,currentChat,friendsList})
 {
 
     if(addFriendDisplay)
     {
         return (
-            <FriendScreen setAddFriendDisplay={setAddFriendDisplay} setFriendsList={setFriendsList} pendingFriendsList={pendingFriendsList} setPendingFriendsList={setPendingFriendsList}/>
+            <FriendScreen setAddFriendDisplay={setAddFriendDisplay} setFriendsList={setFriendsList} friendsList={friendsList}/>
         );
     }
     else

@@ -29,3 +29,31 @@ export const fileUpload=(user,receiver,content)=>{
     };
     socket.emit("message",message);
 }
+
+export const socketListenMessages = (message)=>{
+    setChatMessages(prevObject=>{
+      const newObject=JSON.parse(JSON.stringify(prevObject));
+      let toAdd="";
+      if(user["email"]==message["sender"])
+      toAdd=message["receiver"];
+      else
+      toAdd=message["sender"];
+      if(newObject[toAdd])
+      {
+        const messageExists=newObject[toAdd].some(existingMessage=>
+          existingMessage["timestamp"]==message["timestamp"]&&
+          existingMessage["sender"]==message["sender"]
+        );
+        if(!messageExists)
+        {
+          newObject[toAdd].push(message);
+          newObject[toAdd].sort((a,b)=>{
+            let dateA=new Date(a["timestamp"]);
+            let dateB=new Date(b["timestamp"]);
+            return dateA-dateB;
+          })
+        }
+      }
+      return newObject;
+    });
+}

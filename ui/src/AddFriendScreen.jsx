@@ -1,10 +1,12 @@
+import config from './main.jsx'
+
 function AddFriendScreen({setAddFriendDisplay,setFriendsList})
 {
     const handleAddFriendRequest=async ()=>{
         const friendEmailInput=document.getElementById("friendEmailInput").value;
         try
         {
-            const response=await fetch("/add-friend",{
+            const response=await fetch(config.server+"/add-friend",{
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json",

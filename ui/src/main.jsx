@@ -11,3 +11,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </UserContextProvider>
   </React.StrictMode>
 )
+
+const config={
+  server:"http://localhost:8080",
+  //server:"",
+ };
+ 
+ export default config;

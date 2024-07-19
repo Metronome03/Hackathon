@@ -6,7 +6,6 @@ import jwt
 @app.post("/login-user")
 async def login_user(user:LoginUser):
     try:
-        docs=None
         token=""
         validated=False
         if "@" not in user.identifier:
