@@ -1,4 +1,10 @@
-import config from "./main";
+
+const config={
+  server:"http://localhost:8080",
+  //server:"",
+};
+
+export default config;
 
 export const getFriendsList=async (setFriendsList)=>{
     try

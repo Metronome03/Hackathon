@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { UserContext } from "./UserContext.jsx";
 import { sendMessage, fileUpload } from "./SocketMethods.jsx";
-import config from "./main.jsx";
+import config from "./UserMethods.jsx";
 
 function CurrentChatDisplay({ setChatMessages, currentChat, chatMessages }) {
   const { user } = useContext(UserContext);

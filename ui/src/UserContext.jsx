@@ -1,5 +1,5 @@
 import React, { createContext, useState,useEffect } from 'react';
-import config from './main';
+import config from './UserMethods.jsx';
 
 export const UserContext = createContext();
 

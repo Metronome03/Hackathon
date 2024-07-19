@@ -4,15 +4,16 @@ import { UserContext } from './UserContext.jsx'
 import AccountsDisplay from './AccountsDisplay.jsx'
 import ChatDisplay from './ChatDisplay.jsx'
 import { socket } from './SocketMethods.jsx'
-import config from './main.jsx'
 import { messageListener } from './SocketMethods.jsx'
 import { getFriendsList,handleDifferentChats } from './UserMethods.jsx'
+import AddFriendScreen from "./AddFriendScreen.jsx";
+import CheckFriendRequestScreen from "./CheckFriendRequestScreen.jsx";
 
 function App()
 {
 
   const {user}=useContext(UserContext);
-  const [addFriendDisplay,setAddFriendDisplay]=useState(false);
+  const [displayScreen,setDisplayScreen]=useState(0);
   const [friendsList,setFriendsList]=useState([]);
   const [currentChat,setCurrentChat]=useState({});
   const [chatMessages,setChatMessages]=useState({});
@@ -35,11 +36,25 @@ function App()
   
   if(Object.keys(user).length!=0)
   {
-    return (<div id="top-level-div" className="w-full h-full flex flex-col sm:flex-row justify-center items-center">
-      <AccountsDisplay addFriendDisplay={addFriendDisplay} setAddFriendDisplay={setAddFriendDisplay} friendsList={friendsList} setCurrentChat={setCurrentChat}/>
-      <ChatDisplay setChatMessages={setChatMessages} chatMessages={chatMessages} currentChat={currentChat} addFriendDisplay={addFriendDisplay} setAddFriendDisplay={setAddFriendDisplay} friendsList={friendsList} setFriendsList={setFriendsList}/>
-      </div>
-      );
+    switch(displayScreen)
+    {
+      case 1:
+        return (
+          <CheckFriendRequestScreen friendsList={friendsList} setFriendsList={setFriendsList} setDisplayScreen={setDisplayScreen} />
+        );
+        break;
+      case 2:
+        return (
+          <AddFriendScreen setDisplayScreen={setDisplayScreen} setFriendsList={setFriendsList}/>
+        );
+        break;
+      default:
+        return (<div id="top-level-div" className="w-full h-full flex flex-col sm:flex-row justify-center items-center">
+          <AccountsDisplay setDisplayScreen={setDisplayScreen} friendsList={friendsList} setCurrentChat={setCurrentChat}/>
+          <ChatDisplay setChatMessages={setChatMessages} chatMessages={chatMessages} currentChat={currentChat} friendsList={friendsList} setFriendsList={setFriendsList}/>
+          </div>
+          );
+    }
   }
   else
   {

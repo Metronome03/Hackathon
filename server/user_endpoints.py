@@ -83,7 +83,7 @@ async def add_friend(request:Request,doc:dict=Depends(check_cookies)):
         ref=db.collection("users").document(friendDoc[0].id)
         sub_ref=ref.collection("friends").document(doc["email"])
         sub_ref.set(requestData)
-        return JSONResponse(content="Friend request successfully sent",status_code=200)
+        return JSONResponse(content={"username":friendData["username"]},status_code=200)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Friend could not be added to user")

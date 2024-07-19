@@ -35,7 +35,6 @@ async def connect(sid, environ):
         data = data.to_dict()
         users_sockets[data["email"]]=sid
         sockets_users[sid]=data["email"]
-        print(users_sockets)
     except Exception as e:
         print(e)
 

@@ -1,7 +1,38 @@
-import config from "./main";
+import { useEffect, useRef } from "react";
+import config from "./UserMethods.jsx";
 
-function CheckFriendRequestScreen({friendsList,setFriendsList})
+function CheckFriendRequestScreen({friendsList,setFriendsList,setDisplayScreen})
 {
+    const requestRef=useRef(null);
+
+    const handleOutsideClick=(e)=>{
+        if((getPendingFriendsListSize(friendsList)==0)||(requestRef.current&&!requestRef.current.contains(e.target)))
+        {
+            setDisplayScreen(0);
+        }
+    };
+    
+    useEffect(()=>{
+        setTimeout(() => {
+            document.addEventListener('click', handleOutsideClick);
+        }, 0);
+        return ()=>{
+            setTimeout(() => {
+                document.removeEventListener('click', handleOutsideClick);
+            }, 0);
+        }
+    },[]);
+
+    const getPendingFriendsListSize=(friendsList)=>{
+        let num=0;
+        friendsList.map(friend=>{
+            if(friend["pending"]==true)
+            {
+                num+=1;
+            }
+        });
+        return num;
+    };
     
     const handleAnswer=async (answer,email,username)=>{
         try
@@ -18,9 +49,8 @@ function CheckFriendRequestScreen({friendsList,setFriendsList})
             if(response.ok)
             {
                 const result=await response.json();
-                if(result["accepted"])
+                if(result["accepted"]==true)
                 {
-                    let acceptedUser={};
                     setFriendsList(prevList=>{
                         const updatedList=prevList.map(friend=>{
                             if(friend["email"]==email);
@@ -35,7 +65,16 @@ function CheckFriendRequestScreen({friendsList,setFriendsList})
                 }
                 else
                 {
-
+                    setFriendsList(prevList=>{
+                        const updatedList=prevList.filter(friend=>{
+                            if(friend["email"]==email);
+                            {
+                                return false;
+                            }
+                            return true;
+                        });
+                        return updatedList;
+                    })
                 }
             }
             else
@@ -48,12 +87,19 @@ function CheckFriendRequestScreen({friendsList,setFriendsList})
             console.log(e);
         }
     };
-    return (<div className="basis-4/6 w-full sm:h-full overflow-y-auto max-h-full flex flex-col justify-start items-center">
-        {friendsList.map(friendRequest=>{
+    return (
+    <div id="friend-requests-display" className="fixed inset-0 bg-black bg-opacity-50 w-full h-full flex justify-center items-center">
+    <div className="w-5/6 h-5/6 overflow-y-auto max-h-full flex flex-col justify-start items-center">
+    {getPendingFriendsListSize(friendsList)==0?(
+        <div className="w-full h-full flex justify-center items-center">
+            There are no pending friend requests
+        </div>
+    ):(
+        friendsList.map(friendRequest=>{
             if(friendRequest["pending"]==true)
             {
                 return (
-                    <div key={friendRequest.email} className="w-5/6 h-1/6 flex flex-row justify-between items-center bg-slate-900">
+                    <div ref={requestRef} key={friendRequest.email} className="w-5/6 h-1/6 flex flex-row justify-between items-center bg-slate-900">
                         <div className="basis-4/6 flex flex-col justify-evenls items-start">
                             <div className="basis-3/6">{friendRequest.email}</div>
                             <div className="basis-2/6">{friendRequest.username}</div>
@@ -65,7 +111,10 @@ function CheckFriendRequestScreen({friendsList,setFriendsList})
                     </div>
                 );
             }
-        })}
+        })
+    )
+    }
+    </div>
     </div>
     );
 }
