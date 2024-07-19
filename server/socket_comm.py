@@ -1,12 +1,11 @@
 import copy
-from fastapi import WebSocket,WebSocketDisconnect,HTTPException
 from all_endpoints import app,db,key
-from user_endpoints import get_document_from_cookie
 import socketio
 import jwt
-from datetime import datetime
-from firebase_admin import firestore,storage
+from firebase_admin import storage
 import base64
+from user_methods import get_document_from_cookie
+
 
 sio = socketio.AsyncServer(
     async_mode='asgi',
@@ -21,22 +20,16 @@ sockets_users={}
 async def connect(sid, environ):
     try:
         print('Client connected:',sid)
-        cookies={cookie.split('=')[0]: cookie.split('=')[1] for cookie in environ.get('HTTP_COOKIE','').split('; ')}
+        cookies={cookie.split('=')[0]: cookie.split('=')[1] for cookie in environ.get('HTTP_COOKIE','').split(';')}
         token=cookies["token"]
         if not token:
             raise Exception("Something went wrong whie parsing cookies")
-        decoded_token = jwt.decode(token, key, algorithms=["HS256"])
-        id = decoded_token["id"]
-        doc = db.collection("users").document(id)
-        data = doc.get()
-        if not data.exists:
-            raise Exception("Not a valid user according to cookies")
-        data = data.to_dict()
-        users_sockets[data["email"]]=sid
-        sockets_users[sid]=data["email"]
-        print(users_sockets)
+        doc=get_document_from_cookie(token)
+        users_sockets[doc["email"]]=sid
+        sockets_users[sid]=doc["email"]
     except Exception as e:
         print(e)
+        await sio.disconnect(sid)
 
 @sio.event
 async def disconnect(sid):
@@ -44,16 +37,11 @@ async def disconnect(sid):
         email=sockets_users[sid]
         del sockets_users[sid]
         del users_sockets[email]
-        print('Client disconnected:',sid)
 
 @sio.event
 async def message(sid,message):
     try:
-        message_ref=""
-        if message["sender"]<message["receiver"]:
-            message_ref=message["sender"]+","+message["receiver"]
-        else:
-            message_ref=message["receiver"]+","+message["sender"]
+        message_ref=message["sender"]+","+message["receiver"] if message["sender"]<message["receiver"] else message["receiver"]+","+message["sender"]
         doc = db.collection("chats").document(message_ref).collection("messages")
         if(message["type"]=="text"):
             doc.add(message)
