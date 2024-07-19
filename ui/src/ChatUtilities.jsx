@@ -1,12 +1,18 @@
 import { useContext, useEffect, useState,useRef } from "react";
 import { UserContext } from "./UserContext";
+import config from "./UserMethods";
 
 function MenuIcon({setDisplayScreen}) {
     const [menuDisplay, setMenuDisplay] = useState(false);
     const menuRef=useRef(null);
     const buttonRef=useRef(null);
-    const menuItems = ["Friend Requests", "Add friend"];
+    const menuItems = ["Friend Requests", "Add friend", "Logout"];
   
+    const logoutTriggered=()=>{
+      document.cookie="token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+      window.location.href = window.location.href;
+    };
+
     const handleClick=(e)=>{
       if((menuRef.current&&!menuRef.current.contains(e.target)&&buttonRef.current&&!buttonRef.current.contains(e.target))||(menuDisplay&&menuRef.current.contains(e.target))) 
       {
@@ -43,6 +49,9 @@ function MenuIcon({setDisplayScreen}) {
           break;
         case menuItems[1]:
             setDisplayScreen(2);
+            break;
+        case menuItems[2]:
+            logoutTriggered();
             break;
         default:
             setDisplayScreen(0);
