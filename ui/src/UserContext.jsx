@@ -1,4 +1,5 @@
 import React, { createContext, useState,useEffect } from 'react';
+import config from './main';
 
 export const UserContext = createContext();
 
@@ -9,7 +10,7 @@ export const UserContextProvider=({children})=>{
     const getUserDetails=async ()=>{
         try
         {
-          const response=await fetch("/user-data",{
+          const response=await fetch(config.server+"/user-data",{
             method:"GET",
             credentials:"include",
           });

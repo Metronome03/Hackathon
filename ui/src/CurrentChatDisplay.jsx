@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { UserContext } from "./UserContext.jsx";
 import { sendMessage, fileUpload } from "./SocketMethods.jsx";
+import config from "./main.jsx";
 
 function CurrentChatDisplay({ setChatMessages, currentChat, chatMessages }) {
   const { user } = useContext(UserContext);
@@ -14,7 +15,7 @@ function CurrentChatDisplay({ setChatMessages, currentChat, chatMessages }) {
 
   const handleMisinfo = async (message) => {
     try {
-      const response = await fetch("/check-misinfo", {
+      const response = await fetch(config.server+"/check-misinfo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

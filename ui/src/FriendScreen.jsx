@@ -2,7 +2,7 @@ import { useState } from "react";
 import AddFriendScreen from "./AddFriendScreen.jsx";
 import CheckFriendRequestScreen from "./CheckFriendRequestScreen.jsx";
 
-function FriendScreen({setAddFriendDisplay,setFriendsList,pendingFriendsList,setPendingFriendsList})
+function FriendScreen({setAddFriendDisplay,friendsList,setFriendsList})
 {
     const [checkRequestScreen,setCheckRequestScreen]=useState(false);
     
@@ -17,7 +17,7 @@ function FriendScreen({setAddFriendDisplay,setFriendsList,pendingFriendsList,set
                 <button onClick={()=>handleFriendScreenChange(true)} className="w-full h-full bg-slate-900 hover:bg-black">Friend Requests</button>
             </div>
             {checkRequestScreen?
-                (<CheckFriendRequestScreen pendingFriendsList={pendingFriendsList} setFriendsList={setFriendsList} setPendingFriendsList={setPendingFriendsList}/>)
+                (<CheckFriendRequestScreen friendsList={friendsList} setFriendsList={setFriendsList} />)
             :(<AddFriendScreen setAddFriendDisplay={setAddFriendDisplay} setFriendsList={setFriendsList}/>)
             }
         </div>

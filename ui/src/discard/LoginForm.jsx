@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CryptoJS from 'crypto-js';
+import config from "./main";
 
 function LoginForm({setSigningUp,setAuthenticated})
 {
@@ -12,7 +13,7 @@ function LoginForm({setSigningUp,setAuthenticated})
         const userData={identifier,password:hashedPassword};
         try
         {
-            const response=await fetch("/login-user",{
+            const response=await fetch(config.server+"/login-user",{
                 method:"POST",
                 headers: {
                     'Content-Type': 'application/json',
