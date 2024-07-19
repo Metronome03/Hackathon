@@ -1,13 +1,10 @@
 import copy
-
-from fastapi import WebSocket,WebSocketDisconnect,HTTPException
 from all_endpoints import app,db,key
-from user_endpoints import get_document_from_cookie
 import socketio
 import jwt
-from datetime import datetime
 from firebase_admin import firestore,storage
 import base64
+from user_methods import get_document_from_cookie
 
 sio = socketio.AsyncServer(
     async_mode='asgi',
@@ -26,17 +23,12 @@ async def connect(sid, environ):
         token=cookies["token"]
         if not token:
             raise Exception("Something went wrong whie parsing cookies")
-        decoded_token = jwt.decode(token, key, algorithms=["HS256"])
-        id = decoded_token["id"]
-        doc = db.collection("users").document(id)
-        data = doc.get()
-        if not data.exists:
-            raise Exception("Not a valid user according to cookies")
-        data = data.to_dict()
+        data = get_document_from_cookie(token)
         users_sockets[data["email"]]=sid
         sockets_users[sid]=data["email"]
     except Exception as e:
         print(e)
+        await sio.disconnect(sid)
 
 @sio.event
 async def disconnect(sid):

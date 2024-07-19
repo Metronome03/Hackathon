@@ -31,9 +31,12 @@ async def login_user(user:LoginUser):
 async def signup_user(user:SignupUser):
     try:
         if "@" in user.username:
-            raise Exception(status_code=422,detail="Username has @ character")
+            raise HTTPException(status_code=422,detail="Username has @ character")
         if "@" not in user.email:
-            raise Exception(status_code=422, detail="Email is not valid")
+            raise HTTPException(status_code=422, detail="Email is not valid")
+        existDoc = db.collection("users").where("email", "==", user.email).get()
+        if existDoc:
+            raise HTTPException(status_code=403,detail="User with that email already exists")
         doc=db.collection('users').document()
         doc.set(user.dict())
         return Response(content="User was successfully created",status_code=200)
