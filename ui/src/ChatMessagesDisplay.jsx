@@ -2,10 +2,21 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "./UserContext.jsx";
 import config from "./UserMethods.jsx";
 
-function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages}){
-    let lastMessageRef = useRef(null);
+function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,messageSelected,setMessageSelected}){
     const { user } = useContext(UserContext);
-
+    const lastMessageRef=useRef(null);
+    const selectMessage=(message)=>{
+        setMessageSelected(prevMessage=>{
+            if(prevMessage==null||prevMessage!=message)
+            {
+                return message;
+            }
+            else
+            {
+                return null;
+            }
+        });
+    };
     useEffect(()=>{
         if(lastMessageRef.current)
         {
@@ -52,13 +63,15 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages}){
               className="w-full h-full overflow-y-auto max-h-full gap-y-6 flex flex-col justify-start items-center"
             >
               {chatMessages[currentChat.email].map((message) => {
+                const isSelected=messageSelected&&messageSelected["timestamp"]==message["timestamp"]&&messageSelected["sender"]==message["sender"];
                 if (message["type"] == "text") {
                   if (message["sender"] == user.email) {
                     return (
                       <div
                         key={message["timestamp"] + message["sender"]}
-                        className="w-full basis-1/6 flex flex-row justify-end items-center"
+                        className={`w-full basis-1/6 flex flex-row justify-end items-center ${isSelected ? "bg-green-400 bg-opacity-50" : ""}`}
                         ref={lastMessageRef}
+                        onClick={()=>selectMessage(message)}
                       >
                         <div className="p-2 border-black border-2 border rounded-3xl">
                           {message["content"]}
@@ -70,8 +83,9 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages}){
                     return (
                       <div
                         key={message["timestamp"] + message["sender"]}
-                        className="w-full basis-1/6 flex flex-row justify-start items-center"
+                        className={`w-full basis-1/6 flex flex-row justify-start items-center ${isSelected ? "bg-green-400 bg-opacity-50" : ""}`}
                         ref={lastMessageRef}
+                        onClick={()=>selectMessage(message)}
                       >
                         <div className="w-1/12"></div>
                         <div
@@ -124,8 +138,9 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages}){
                     return (
                       <div
                         key={message["timestamp"] + message["sender"]}
-                        className="w-full basis-1/6 flex flex-row justify-end items-center"
+                        className={`w-full basis-1/6 flex flex-row justify-end items-center ${isSelected ? "bg-green-400 bg-opacity-50" : ""}`}
                         ref={lastMessageRef}
+                        onClick={()=>selectMessage(message)}
                       >
                         <div className="basis-4/6 h-full border-black border-2">
                           <div className="p-2 bg-slate-900">
@@ -141,8 +156,9 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages}){
                     return (
                       <div
                         key={message["timestamp"] + message["sender"]}
-                        className="w-full basis-1/6 flex flex-row justify-start items-center"
+                        className={`w-full basis-1/6 flex flex-row justify-start items-center ${isSelected ? "bg-green-400 bg-opacity-50" : ""}`}
                         ref={lastMessageRef}
+                        onClick={()=>selectMessage(message)}
                       >
                         <div
                           className={

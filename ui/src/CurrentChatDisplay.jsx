@@ -1,8 +1,38 @@
+import { useState } from 'react';
 import ChatMessagesDisplay from './ChatMessagesDisplay.jsx'
 import { sendMessage, fileUpload } from "./SocketMethods.jsx";
 
 
-function CurrentChatDisplay({ setChatMessages, currentChat, chatMessages }) {
+function CurrentChatDisplay({setChatMessages,currentChat,chatMessages}) {
+
+  const [messageSelected,setMessageSelected]=useState(null);
+
+  const downloadMessage=()=>{
+    const dataURIToBlob=(dataURI)=>
+    {
+      const byteString = atob(dataURI.split(',')[1]);
+      const mimeString=dataURI.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab],{type:mimeString});
+    };
+    if(messageSelected["type"]!="text")
+    {
+      const dataURI=`data:${messageSelected["content"]["type"]};base64,${messageSelected["content"]["data"]}`;
+      const blob=dataURIToBlob(dataURI);
+      const link=document.createElement('a');
+      link.href=URL.createObjectURL(blob);
+      link.download=messageSelected["content"]["filename"];
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href); 
+      setMessageSelected(null);
+    }
+  };
 
   const handleSend = () => {
     const message = document.getElementById("message-input");
@@ -51,11 +81,23 @@ function CurrentChatDisplay({ setChatMessages, currentChat, chatMessages }) {
     >
       <div
         id="chat-header"
-        className="w-full bg-slate-900 basis-1/6 bg-slate-900 flex flex-row justify-start items-center"
+        className={`w-full bg-slate-900 basis-1/6 bg-slate-900 flex flex-row ${messageSelected==null?"justify-start":"justify-end"} items-center`}
       >
-        <div className="basis-5/6 overflow-x-auto max-w-full">
+        {messageSelected==null?(
+          <div className="basis-5/6 overflow-x-auto max-w-full">
           {currentChat.username}
         </div>
+      ):(
+        <div className="basis-5/6 overflow-x-auto max-w-full flex flex-row justify-end items-center">
+          <button onClick={downloadMessage} className='basis-1/6 flex flex-row justify-center'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+  <polyline points="7 10 12 15 17 10"></polyline>
+  <line x1="12" y1="15" x2="12" y2="3"></line>
+</svg>
+          </button>
+        </div>
+      )}
       </div>
       <div
         id="message-container"
@@ -63,7 +105,7 @@ function CurrentChatDisplay({ setChatMessages, currentChat, chatMessages }) {
       >
         {chatMessages[currentChat.email] &&
         chatMessages[currentChat.email].length != 0 ? (
-          <ChatMessagesDisplay setChatMessages={setChatMessages} currentChat={currentChat} chatMessages={chatMessages}/>
+          <ChatMessagesDisplay setChatMessages={setChatMessages} currentChat={currentChat} chatMessages={chatMessages} messageSelected={messageSelected} setMessageSelected={setMessageSelected}/>
         ) : (
           <div
             id="empty-chat"
