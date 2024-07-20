@@ -79,7 +79,6 @@ async def message(sid,message):
                     bwm1.read_img(file_name_local_path+file_name_local)
                     bwm1.read_wm(watermark_text, mode='str')
                     bwm1.embed(file_name_local_path+"watermarked_"+file_name_local)
-                    print("Length:",len(bwm1.wm_bits))
                     with open(file_name_local_path+"watermarked_"+file_name_local,"rb") as read_image:
                         image_bytes=read_image.read()
                         image_base64=base64.b64encode(image_bytes).decode('utf-8')

@@ -88,9 +88,9 @@ function ChatUtilities({setDisplayScreen})
     const {user}=useContext(UserContext);
 
     return (
-        <div id="chat-utilities" className="w-full basis-1/6 flex flex-col justify-evenly items-center">
-            <div className="w-full flex flex-row justify-between items-center">
-                <h6 className="basis-4/6">{user.username}</h6>
+        <div id="chat-utilities" className="w-full bg-blue-950 basis-1/6 flex flex-col justify-evenly items-center">
+            <div className="w-full  flex flex-row justify-between items-center">
+                <h6 className="basis-4/6 pl-2 ">{user.username}</h6>
                 <MenuIcon setDisplayScreen={setDisplayScreen}/>
             </div>
             <div className="w-full flex flex-row justify-evenly items-center">

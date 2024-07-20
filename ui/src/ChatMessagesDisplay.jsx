@@ -24,46 +24,13 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
         }
     },[currentChat]);
   
-    const handleMisinfo = async (message) => {
-      try {
-        const response = await fetch(config.server + "/check-misinfo", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(message),
-        });
-        if (response.ok) {
-          const result = await response.json();
-          setChatMessages((prevObject) => {
-            let newObject = JSON.parse(JSON.stringify(prevObject));
-            if (Object.keys(newObject).length != 0) {
-              const veryNew = newObject.map((element) => {
-                if (
-                  element["timestamp"] == message["timestamp"] &&
-                  element["sender" == message["timestamp"]]
-                ) {
-                  element["misinfo"] = message["misinfo"];
-                }
-                return element;
-              });
-              return veryNew;
-            }
-            return newObject;
-          });
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-  
     return (
       <div
               id="chat-messages"
               className="w-full h-full overflow-y-auto max-h-full flex flex-col justify-start items-center"
             >
               {chatMessages[currentChat.email].map((message) => {
-                console.log(message["content"]["watermark"])
+                console.log(message["misinfo"])
                 const isSelected=messageSelected&&messageSelected["timestamp"]==message["timestamp"]&&messageSelected["sender"]==message["sender"];
                 if (message["type"] == "text") {
                   if (message["sender"] == user.email) {
@@ -92,7 +59,7 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                         <div
                           className={
                             (message["misinfo"]
-                              ? "border-rose-500 border-2 "
+                              ? "border-rose-500 border-6 "
                               : "border-black border-2 ") + "p-2 rounded-3xl"
                           }
                         >
@@ -110,10 +77,10 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                         ref={lastMessageRef}
                         onClick={()=>selectMessage(message)}
                       >
-                        <div className={`basis-4/6 h-full ${message["content"]["watermark"]?"border-green-900":"border-rose-500"} border-2`}>
-                          <div className="p-2 bg-slate-900">
+                        <div className={`basis-4/6 h-full`}>
+                          <div className="p-2 ">
                             <img
-                              className="w-full h-fit"
+                              className={`w-full h-fit ${message["content"]["watermark"]?"border-green-600":"border-rose-500"} border-8`}
                               src={`data:${message["content"]["type"]};base64,${message["content"]["data"]}`}
                             ></img>
                           </div>
@@ -135,14 +102,12 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                       >
                         <div
                           className={
-                            (message["misinfo"]||!message["content"]["watermark"]
-                              ? "border-rose-500 border-2 "
-                              : "border-black border-2 ") + "basis-4/6 h-full "
+                        "basis-4/6 h-full "
                           }
                         >
-                          <div className="p-2 bg-slate-900">
+                          <div className="p-2 ">
                             <img
-                              className="w-full h-fit"
+                              className={`w-full h-fit ${message["misinfo"]||!message["content"]["watermark"]?"border-rose-500 border-8":"border-green-600 border-8"}`}
                               src={`data:${message["content"]["type"]};base64,${message["content"]["data"]}`}
                             ></img>
                           </div>

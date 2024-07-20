@@ -59,7 +59,7 @@ function App()
         );
         break;
       default:
-        return (<div id="top-level-div" className="w-full h-full flex flex-col sm:flex-row justify-center items-center">
+        return (<div id="top-level-div" className="w-full h-full bg-cyan-800 text-slate-100 text flex flex-col sm:flex-row justify-center items-center">
           <AccountsDisplay setDisplayScreen={setDisplayScreen} friendsList={friendsList} setCurrentChat={setCurrentChat}/>
           <ChatDisplay setChatMessages={setChatMessages} chatMessages={chatMessages} currentChat={currentChat} friendsList={friendsList} setFriendsList={setFriendsList}/>
           </div>

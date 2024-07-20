@@ -5,6 +5,6 @@
 @layer components
 {
     .border-1{
-        border:1px;
+        border-width:1px;
     }
 }

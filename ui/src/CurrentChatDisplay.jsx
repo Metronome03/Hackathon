@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import ChatMessagesDisplay from './ChatMessagesDisplay.jsx'
 import { sendMessage, fileUpload } from "./SocketMethods.jsx";
 import { UserContext } from './UserContext.jsx';
-
+import config from './UserMethods.jsx';
 
 function CurrentChatDisplay({setChatMessages,currentChat,chatMessages}) {
 
@@ -33,6 +33,42 @@ function CurrentChatDisplay({setChatMessages,currentChat,chatMessages}) {
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href); 
       setMessageSelected(null);
+    }
+  };
+
+  const handleMisinfo = async () => {
+    if(messageSelected)
+    {
+      try {
+        const response = await fetch(config.server + "/check-misinfo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(messageSelected),
+        });
+        if (response.ok) 
+          {
+          const result = await response.json();
+          const returnedMessage=result["message"];
+          const misinfo=result["misinfo"];
+          setChatMessages(prevChats=>{
+            let newObjects = JSON.parse(JSON.stringify(prevChats));
+            let newChats=prevChats[currentChat["email"]].map((element)=>{
+              if(element["timestamp"]==returnedMessage["timestamp"]&&element["sender"]==returnedMessage["sender"])
+              {
+                element["misinfo"]=misinfo;
+              }
+              return element;
+            });
+            newObjects[currentChat["email"]]=newChats;
+            return newObjects;
+          });
+          };
+        }
+       catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -83,10 +119,10 @@ function CurrentChatDisplay({setChatMessages,currentChat,chatMessages}) {
     >
       <div
         id="chat-header"
-        className={`w-full bg-slate-900 basis-1/6 bg-slate-900 flex flex-row ${messageSelected==null?"justify-start":"justify-end"} items-center`}
+        className={`w-full border-1 border-black basis-1/6 bg-blue-950 flex flex-row ${messageSelected==null?"justify-start":"justify-end"} items-center`}
       >
         {messageSelected==null?(
-          <div className="basis-5/6 overflow-x-auto max-w-full">
+          <div className="basis-5/6 overflow-x-auto max-w-full pl-2">
           {currentChat.username}
         </div>
       ):(
@@ -94,7 +130,7 @@ function CurrentChatDisplay({setChatMessages,currentChat,chatMessages}) {
           {
             user["email"]!=messageSelected["sender"]?(
               <button
-              onClick={() => handleMisinfo(message)}
+              onClick={() => handleMisinfo()}
               className=""
             >
               <svg
