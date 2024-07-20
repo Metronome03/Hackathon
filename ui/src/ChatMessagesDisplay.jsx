@@ -41,7 +41,7 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                         ref={lastMessageRef}
                         onClick={()=>selectMessage(message)}
                       >
-                        <div className="p-2 border-black border-2 border rounded-3xl">
+                        <div className="p-2 border-black border-2 border rounded-xl">
                           {message["content"]}
                         </div>
                         <div className="w-1/12"></div>
@@ -60,7 +60,7 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                           className={
                             (message["misinfo"]
                               ? "border-rose-500 border-6 "
-                              : "border-black border-2 ") + "p-2 rounded-3xl"
+                              : "border-black border-2 ") + "p-2 rounded-xl"
                           }
                         >
                           {message["content"]}

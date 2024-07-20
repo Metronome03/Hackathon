@@ -65,7 +65,7 @@ function AddFriendScreen({setDisplayScreen,setFriendsList})
         }
     };
     return (
-        <div id="chat-display" className="fixed inset-0 bg-black bg-opacity-50 w-full h-full flex justify-center items-center">
+        <div id="chat-display" className="fixed inset-0 bg-cyan-700 w-full h-full flex justify-center items-center">
             <div className="w-5/6 h-5/6 flex flex-col justify-evenly items-center">
             <div className="w-5/6 basis-1/6 flex flex-row justify-start items-start">
                 <button className="basis-1/12 h-3/6 hover:bg-gray-700" onClick={backClick}>&lt;</button>
@@ -73,9 +73,9 @@ function AddFriendScreen({setDisplayScreen,setFriendsList})
             <h4 className="w-full basis-1/6 flex justify-center items-center">Add Friend</h4>
             <div className="w-5/6 basis-2/6 flex flex-col justify-center items-center">
                 <h5>Enter the email of the user</h5>
-                <input ref={textRef} id="friendEmailInput" type="text" className="w-full basis-1/6 text-black"></input>
+                <input ref={textRef} id="friendEmailInput" type="text" className="w-full basis-1/6 text-black "></input>
             </div>
-            <button ref={buttonRef} onClick={handleAddFriendRequest} className="w-5/6 basis-1/6 hover:bg-black border-2">Add Friend</button>
+            <button ref={buttonRef} onClick={handleAddFriendRequest} className="w-5/6 basis-1/6 hover:bg-black hover:text-white border-2">Add Friend</button>
             </div>
         </div>
     );

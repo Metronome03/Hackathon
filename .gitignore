@@ -2,6 +2,7 @@
 
 server/serviceAccountKey.json
 server/__pycache__
+server/factCheck/.env
 
 ui/node_modules
 

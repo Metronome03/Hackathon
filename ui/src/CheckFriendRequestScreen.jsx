@@ -88,7 +88,7 @@ function CheckFriendRequestScreen({friendsList,setFriendsList,setDisplayScreen})
         }
     };
     return (
-    <div id="friend-requests-display" className="fixed inset-0 bg-black bg-opacity-50 w-full h-full flex justify-center items-center">
+    <div id="friend-requests-display" className="fixed inset-0 bg-cyan-700  w-full h-full flex justify-center items-center">
     <div className="w-5/6 h-5/6 overflow-y-auto max-h-full flex flex-col justify-start items-center">
     {getPendingFriendsListSize(friendsList)==0?(
         <div className="w-full h-full flex justify-center items-center">
@@ -99,14 +99,14 @@ function CheckFriendRequestScreen({friendsList,setFriendsList,setDisplayScreen})
             if(friendRequest["pending"]==true)
             {
                 return (
-                    <div ref={requestRef} key={friendRequest.email} className="w-5/6 h-1/6 flex flex-row justify-between items-center bg-slate-900">
+                    <div ref={requestRef} key={friendRequest.email} className="w-5/6 h-1/6 flex flex-row justify-between items-center bg-slate-100">
                         <div className="basis-4/6 flex flex-col justify-evenls items-start">
                             <div className="basis-3/6">{friendRequest.email}</div>
                             <div className="basis-2/6">{friendRequest.username}</div>
                         </div>
                         <div className="basis-2/6 flex flex-row justify-evenly items-center">
-                            <button onClick={()=>handleAnswer(true,friendRequest.email,friendRequest.username)} className="bg-green-800">Add</button>
-                            <button onClick={()=>handleAnswer(false,friendRequest.email,friendRequest.username)} className="bg-red-800">Reject</button>
+                            <button onClick={()=>handleAnswer(true,friendRequest.email,friendRequest.username)} className="hover:bg-green-800 border-1 border-black">Add</button>
+                            <button onClick={()=>handleAnswer(false,friendRequest.email,friendRequest.username)} className="hover:bg-red-800 border-1 border-black">Reject</button>
                         </div>
                     </div>
                 );

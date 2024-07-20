@@ -63,29 +63,12 @@ async def check_misinfo(request:Request):
             path="./misinfo_images/"+body["timestamp"].replace(":","_")+body["sender"]+"."+body["content"]["type"].split('/')[1]
             with open(path, "wb") as f:
                 f.write(iamge_data)
-            #misinfo = agent.run(None,path)
-            misinfo='''json
-{
-    "misinformation": true,
-    "comments": "The claim that cocaine can kill the coronavirus is false and dangerous misinformation. Health professionals have discredited this claim, and authorities are urging the public to disregard such unverified information.",
-    "sources": [
-        {
-            "title": "WHO debunks myth that cocaine can kill coronavirus",
-            "link": "https://www.who.int/news-room/q-a-detail/q-a-coronaviruses"
-        },
-        {
-            "title": "Fact-check: Cocaine does not cure or prevent coronavirus",
-            "link": "https://www.reuters.com/article/uk-factcheck-cocaine-coronavirus-idUSKBN20Q0LU"
-        },
-        {
-            "title": "No, cocaine does not kill coronavirus: health authorities",
-            "link": "https://www.bbc.com/news/world-51735367"
-        }
-    ]
-}'''
+            misinfo = agent.run(None,path)
         pattern = r'"misinformation"\s*:\s*([^,]+)'
         match = re.search(pattern, misinfo)
-        match=True if match.contains("true") else False
+        if match:
+            value = match.group(1).strip()
+            match = True if value == "true" else False
         return JSONResponse(content={"misinfo":match,"message":body},status_code=200)
     except Exception as e:
         print(e)
