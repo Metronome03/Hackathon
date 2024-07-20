@@ -31,7 +31,7 @@ export const fileUpload=(user,receiver,content)=>{
 }
 
 export const messageListener=(message,user,setChatMessages)=>{
-    setChatMessages(prevObject=>{
+  setChatMessages(prevObject=>{
       const newObject=JSON.parse(JSON.stringify(prevObject));
       let toAdd="";
       if(user["email"]==message["sender"])

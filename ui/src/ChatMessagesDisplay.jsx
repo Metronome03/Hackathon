@@ -60,9 +60,10 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
     return (
       <div
               id="chat-messages"
-              className="w-full h-full overflow-y-auto max-h-full gap-y-6 flex flex-col justify-start items-center"
+              className="w-full h-full overflow-y-auto max-h-full flex flex-col justify-start items-center"
             >
               {chatMessages[currentChat.email].map((message) => {
+                console.log(message["content"]["watermark"])
                 const isSelected=messageSelected&&messageSelected["timestamp"]==message["timestamp"]&&messageSelected["sender"]==message["sender"];
                 if (message["type"] == "text") {
                   if (message["sender"] == user.email) {
@@ -97,39 +98,6 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                         >
                           {message["content"]}
                         </div>
-                        <button
-                          onClick={() => handleMisinfo(message)}
-                          className=""
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            xmlnsXlink="http://www.w3.org/1999/xlink"
-                            width="20px"
-                            height="20px"
-                            viewBox="0 0 512 512"
-                            version="1.1"
-                          >
-                            <title>ai</title>
-                            <g
-                              id="Page-1"
-                              stroke="none"
-                              strokeWidth="1"
-                              fill="none"
-                              fillRule="evenodd"
-                            >
-                              <g
-                                id="icon"
-                                fill="#f7f7f7"
-                                transform="translate(64.000000, 64.000000)"
-                              >
-                                <path
-                                  d="M320,64 L320,320 L64,320 L64,64 L320,64 Z M171.749388,128 L146.817842,128 L99.4840387,256 L121.976629,256 L130.913039,230.977 L187.575039,230.977 L196.319607,256 L220.167172,256 L171.749388,128 Z M260.093778,128 L237.691519,128 L237.691519,256 L260.093778,256 L260.093778,128 Z M159.094727,149.47526 L181.409039,213.333 L137.135039,213.333 L159.094727,149.47526 Z M341.333333,256 L384,256 L384,298.666667 L341.333333,298.666667 L341.333333,256 Z M85.3333333,341.333333 L128,341.333333 L128,384 L85.3333333,384 L85.3333333,341.333333 Z M170.666667,341.333333 L213.333333,341.333333 L213.333333,384 L170.666667,384 L170.666667,341.333333 Z M85.3333333,0 L128,0 L128,42.6666667 L85.3333333,42.6666667 L85.3333333,0 Z M256,341.333333 L298.666667,341.333333 L298.666667,384 L256,384 L256,341.333333 Z M170.666667,0 L213.333333,0 L213.333333,42.6666667 L170.666667,42.6666667 L170.666667,0 Z M256,0 L298.666667,0 L298.666667,42.6666667 L256,42.6666667 L256,0 Z M341.333333,170.666667 L384,170.666667 L384,213.333333 L341.333333,213.333333 L341.333333,170.666667 Z M0,256 L42.6666667,256 L42.6666667,298.666667 L0,298.666667 L0,256 Z M341.333333,85.3333333 L384,85.3333333 L384,128 L341.333333,128 L341.333333,85.3333333 Z M0,170.666667 L42.6666667,170.666667 L42.6666667,213.333333 L0,213.333333 L0,170.666667 Z M0,85.3333333 L42.6666667,85.3333333 L42.6666667,128 L0,128 L0,85.3333333 Z"
-                                  id="Combined-Shape"
-                                ></path>
-                              </g>
-                            </g>
-                          </svg>
-                        </button>
                       </div>
                     );
                   }
@@ -142,13 +110,18 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                         ref={lastMessageRef}
                         onClick={()=>selectMessage(message)}
                       >
-                        <div className="basis-4/6 h-full border-black border-2">
+                        <div className={`basis-4/6 h-full ${message["content"]["watermark"]?"border-green-900":"border-rose-500"} border-2`}>
                           <div className="p-2 bg-slate-900">
                             <img
                               className="w-full h-fit"
                               src={`data:${message["content"]["type"]};base64,${message["content"]["data"]}`}
                             ></img>
                           </div>
+                          {message["content"]["watermark"]?(
+                            <div className="flex flex-row justify-end items-center">
+                                Watermark embedded✅
+                            </div>
+                          ):null}
                         </div>
                       </div>
                     );
@@ -162,7 +135,7 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                       >
                         <div
                           className={
-                            (message["misinfo"]
+                            (message["misinfo"]||!message["content"]["watermark"]
                               ? "border-rose-500 border-2 "
                               : "border-black border-2 ") + "basis-4/6 h-full "
                           }
@@ -172,40 +145,17 @@ function ChatMessagesDisplay({setChatMessages, currentChat, chatMessages,message
                               className="w-full h-fit"
                               src={`data:${message["content"]["type"]};base64,${message["content"]["data"]}`}
                             ></img>
-                            <button
-                              onClick={() => handleMisinfo(message)}
-                              className=""
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                xmlnsXlink="http://www.w3.org/1999/xlink"
-                                width="20px"
-                                height="20px"
-                                viewBox="0 0 512 512"
-                                version="1.1"
-                              >
-                                <title>ai</title>
-                                <g
-                                  id="Page-1"
-                                  stroke="none"
-                                  strokeWidth="1"
-                                  fill="none"
-                                  fillRule="evenodd"
-                                >
-                                  <g
-                                    id="icon"
-                                    fill="#f7f7f7"
-                                    transform="translate(64.000000, 64.000000)"
-                                  >
-                                    <path
-                                      d="M320,64 L320,320 L64,320 L64,64 L320,64 Z M171.749388,128 L146.817842,128 L99.4840387,256 L121.976629,256 L130.913039,230.977 L187.575039,230.977 L196.319607,256 L220.167172,256 L171.749388,128 Z M260.093778,128 L237.691519,128 L237.691519,256 L260.093778,256 L260.093778,128 Z M159.094727,149.47526 L181.409039,213.333 L137.135039,213.333 L159.094727,149.47526 Z M341.333333,256 L384,256 L384,298.666667 L341.333333,298.666667 L341.333333,256 Z M85.3333333,341.333333 L128,341.333333 L128,384 L85.3333333,384 L85.3333333,341.333333 Z M170.666667,341.333333 L213.333333,341.333333 L213.333333,384 L170.666667,384 L170.666667,341.333333 Z M85.3333333,0 L128,0 L128,42.6666667 L85.3333333,42.6666667 L85.3333333,0 Z M256,341.333333 L298.666667,341.333333 L298.666667,384 L256,384 L256,341.333333 Z M170.666667,0 L213.333333,0 L213.333333,42.6666667 L170.666667,42.6666667 L170.666667,0 Z M256,0 L298.666667,0 L298.666667,42.6666667 L256,42.6666667 L256,0 Z M341.333333,170.666667 L384,170.666667 L384,213.333333 L341.333333,213.333333 L341.333333,170.666667 Z M0,256 L42.6666667,256 L42.6666667,298.666667 L0,298.666667 L0,256 Z M341.333333,85.3333333 L384,85.3333333 L384,128 L341.333333,128 L341.333333,85.3333333 Z M0,170.666667 L42.6666667,170.666667 L42.6666667,213.333333 L0,213.333333 L0,170.666667 Z M0,85.3333333 L42.6666667,85.3333333 L42.6666667,128 L0,128 L0,85.3333333 Z"
-                                      id="Combined-Shape"
-                                    ></path>
-                                  </g>
-                                </g>
-                              </svg>
-                            </button>
                           </div>
+                          {
+                          message["content"]["watermark"]?(
+                            <div className="flex flex-row justify-start items-center">
+                                Image verified✅
+                            </div>
+                          ):
+                          <div className="flex flex-row justify-start items-center">
+                            Verification failed❗
+                          </div>
+                        }
                         </div>
                       </div>
                     );

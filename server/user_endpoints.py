@@ -35,7 +35,7 @@ async def get_previous_chat(request:Request,doc:dict=Depends(check_cookies)):
             if(messages[i]["type"]!="text"):
                 try:
                     bucket=storage.bucket()
-                    blob=bucket.blob(messages[i]["timestamp"]+","+messages[i]["content"]["filename"])
+                    blob=bucket.blob(messages[i]["timestamp"]+","+messages[i]["sender"]+","+messages[i]["content"]["filename"])
                     image_data = blob.download_as_bytes()
                     base64_data = base64.b64encode(image_data).decode('utf-8')
                     messages[i]["content"]["data"]=base64_data

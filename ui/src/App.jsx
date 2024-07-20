@@ -19,12 +19,22 @@ function App()
   const [chatMessages,setChatMessages]=useState({});
 
   useEffect(()=>{
-    socket.on("message",(message)=>messageListener(message,user,setChatMessages));;
+    socket.on("message",(message)=>{
+      if(Object.keys(user).length!=0)
+      {
+        messageListener(message,user,setChatMessages);
+      }
+  });
 
     return ()=>{
-      socket.off("message",(message)=>messageListener(message,user,setChatMessages));;
+      socket.off("message",(message)=>{
+        if(Object.keys(user).length!=0)
+        {
+          messageListener(message,user,setChatMessages); 
+        }
+    });
     }
-  },[]);
+  },[user]);
   
   useEffect(()=>{
     getFriendsList(setFriendsList);
